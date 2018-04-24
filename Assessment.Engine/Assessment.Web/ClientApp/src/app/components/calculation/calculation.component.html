@@ -1,0 +1,55 @@
+<div class="container">
+    <header class="pageHeader">
+        <h3><i class="fa fa-calculator fa-lg page-caption" aria-hidden="true"></i> {{'pageHeader.Calculations' | translate}}</h3>
+    </header>
+    <form [formGroup]="calculateForm" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="serverAddress">Server Address:</label>
+            <div class="col-sm-8">
+                <input id="serverAddress" [readonly]="connected" type="text" class="form-control" size="30" formControlName="serverAddress" />
+            </div>
+            <div class="col-sm-2">
+                <button *ngIf="!connected" class="btn btn-default" type="button" (click)="connect()">Connect</button>
+                <button *ngIf="connected" class="btn btn-default" type="button" (click)="disconnect()">Disconnect</button>
+            </div>
+        </div>
+        <div class="form-group" *ngIf="connected">
+            <label class="col-sm-2 control-label">{{'calculation.Expression' | translate}} </label>
+            <div class="col-sm-9">
+                <div formArrayName="calculationItems" class="well well-lg">
+                    <div *ngFor="let calculationItem of calculationItems.controls; let i=index" [formGroupName]="i" class="form-group">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="{{'expression' + i}}">Expression:</label>
+                            <div class="col-sm-10"><input id="{{'expression + i'}}" type="text" class="form-control" size="50" formControlName="expression" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="{{'result' + i}}">Result:</label>
+                            <div class="col-sm-10"><input id="{{'result + i'}}" type="text" readonly class="form-control" size="50" formControlName="result" /></div>
+                        </div>
+                        <div class='form-group'>
+                            <div class="col-sm-12">
+                                <button type="button" class="btn btn-warning pull-right" (click)="removeCalculationItem(i)">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button class="btn btn-primary pull-right" type="button" (click)="calculate()">Calculate!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" (click)="addCalculationItem()">+</button>
+            </div>
+        </div>
+        
+        <!--<ul class="list-group">
+            <li class="list-group-item">Form status: {{form.status}}</li>
+            <li class="list-group-item">Form dirty: {{form.dirty}}</li>
+            <li class="list-group-item">Form touched: {{form.touched}}</li>
+            <li class="list-group-item">Form errors: {{form.errors}}</li>
+            <li class="list-group-item">Form value: <pre>{{form.value | json}}</pre></li>
+        </ul>-->
+    </form>
+</div>
