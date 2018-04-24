@@ -16,7 +16,6 @@ import { LocalStoreManager } from '../services/local-store-manager.service';
 import { AppTitleService } from '../services/app-title.service';
 import { AuthService } from '../services/auth.service';
 import { ConfigurationService } from '../services/configuration.service';
-import { Permission } from '../models/permission.model';
 import { LoginComponent } from "../components/login/login.component";
 
 var alertify: any = require('../assets/scripts/alertify.js');

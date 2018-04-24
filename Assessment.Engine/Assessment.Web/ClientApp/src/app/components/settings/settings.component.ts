@@ -10,7 +10,6 @@ import 'rxjs/add/operator/switchMap';
 import { fadeInOut } from '../../services/animations';
 import { BootstrapTabDirective } from "../../directives/bootstrap-tab.directive";
 import { AccountService } from "../../services/account.service";
-import { Permission } from '../../models/permission.model';
 
 
 @Component({

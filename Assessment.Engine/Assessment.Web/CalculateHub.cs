@@ -2,12 +2,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Assessment.Engine;
 using Assessment.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Assessment.Web
 {
+    [Authorize]
     public class CalculateHub : Hub
     {
+        
         public string Connect()
         {
             return Context.ConnectionId;

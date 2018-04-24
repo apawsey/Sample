@@ -16,9 +16,7 @@ import { ConfigurationService } from './configuration.service';
 import { DBkeys } from './db-Keys';
 import { JwtHelper } from './jwt-helper';
 import { Utilities } from './utilities';
-import { LoginResponse, IdToken } from '../models/login-response.model';
 import { User } from '../models/user.model';
-import { Permission, PermissionNames, PermissionValues } from '../models/permission.model';
 
 @Injectable()
 export class AuthService {

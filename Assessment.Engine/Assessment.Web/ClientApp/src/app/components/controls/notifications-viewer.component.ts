@@ -9,7 +9,6 @@ import { AlertService, DialogType, MessageSeverity } from '../../services/alert.
 import { AppTranslationService } from "../../services/app-translation.service";
 import { NotificationService } from "../../services/notification.service";
 import { AccountService } from "../../services/account.service";
-import { Permission } from '../../models/permission.model';
 import { Utilities } from "../../services/utilities";
 import { Notification } from '../../models/notification.model';
 

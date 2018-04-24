@@ -1,3 +1,4 @@
+using System;
 using Assessment.Web.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +8,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Primitives;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Assessment.Web
@@ -39,19 +44,6 @@ namespace Assessment.Web
             });
 #endif
             services.AddSignalR();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info {Title = "Assessment.Web.Test3 API", Version = "v1"});
-
-                c.AddSecurityDefinition("OpenID Connect", new OAuth2Scheme
-                {
-                    Type = "oauth2",
-                    Flow = "password",
-                    TokenUrl = "/connect/token"
-                });
-            });
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -65,19 +57,18 @@ namespace Assessment.Web
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ILogger<Startup> logger)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(LogLevel.Warning);
             loggerFactory.AddDebug(LogLevel.Warning);
-            loggerFactory.AddFile(Configuration.GetSection("Logging"));
 
             Utilities.ConfigureLogger(loggerFactory);
 
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-            else
-                app.UseExceptionHandler("/Home/Error");
-
+#if DEBUG
+            app.UseDeveloperExceptionPage();
+#else
+            app.UseExceptionHandler("/Home/Error");
+#endif
 
             app.UseCors(builder => builder
                 .WithOrigins("https://localhost:5000",
@@ -90,7 +81,7 @@ namespace Assessment.Web
                     "https://localhost:5007",
                     "https://localhost:5008",
                     "https://localhost:5009",
-                    "https://localhost:50010")
+                    "https://localhost:5010")
                 .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod());
@@ -109,10 +100,6 @@ namespace Assessment.Web
             app.UseAuthentication();
 
             app.UseSignalR(routes => { routes.MapHub<CalculateHub>("/calculationHub"); });
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Assessment.Web API V1"); });
-
 
             app.UseMvc(routes =>
             {

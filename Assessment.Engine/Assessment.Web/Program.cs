@@ -6,35 +6,47 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using Assessment.Web.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MediaTypeNames = System.Net.Mime.MediaTypeNames;
 
 namespace Assessment.Web
 {
     public class Program
     {
+        private static TextWriter _consoleOut;
+        private static readonly CancellationTokenSource CancelTokenSource = new CancellationTokenSource();
+
         public static void Main(string[] args)
         {
             IWebHost host = BuildWebHost(args);
+            Console.WriteLine("Starting Calculations Server...");
+            _consoleOut = Console.Out;  //Save the reference to the old out value (The terminal)
+            Console.SetOut(new StreamWriter(Stream.Null));  //Remove the console output
+            host.Start();   //Start the host in a non-blocking way
+            Console.SetOut(_consoleOut);    //Put the console output back, after the messages has been written
 
-            //using (IServiceScope scope = host.Services.CreateScope())
-            //{
-            //    IServiceProvider services = scope.ServiceProvider;
-            //    try
-            //    {
-            //        IDatabaseInitializer databaseInitializer = services.GetRequiredService<IDatabaseInitializer>();
-            //        databaseInitializer.SeedAsync().Wait();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ILogger<Program> logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogCritical(LoggingEvents.INIT_DATABASE, ex, LoggingEvents.INIT_DATABASE.Name);
-            //    }
-            //}
+            Console.CancelKeyPress += OnConsoleCancelKeyPress;
+            WaitHandle[] waitHandles = new WaitHandle[] {
+                CancelTokenSource.Token.WaitHandle
+            };
+            WaitHandle.WaitAll(waitHandles);
+        }
 
-            host.Run();
+        /// <summary>
+        /// This method is meant as an eventhandler to be called when the Console received a cancel signal.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void OnConsoleCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            //Got Ctrl+C from console
+            Console.WriteLine("Shutting down.");
+            CancelTokenSource.Cancel();
         }
 
 

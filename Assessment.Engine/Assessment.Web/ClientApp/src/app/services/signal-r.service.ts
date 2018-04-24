@@ -1,19 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HubConnection } from '@aspnet/signalr';
+import { HubConnection, LogLevel, TransportType, IHubConnectionOptions } from '@aspnet/signalr';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/of';
 import { Observable } from "rxjs/Observable";
 import { CalculationItem } from "../models/calculation-item.model";
+import {AuthService} from "./auth.service";
 
 @Injectable()
 export class SignalRService {
 
     private _hubConnection: HubConnection;
 
-    constructor() { }
+    constructor(private authService: AuthService) { }
 
     public connect(url: string): Observable<string> {
-        this._hubConnection = new HubConnection(url);
+        var options = {
+            accessTokenFactory: () => this.authService.accessToken
+        };
+        this._hubConnection = new HubConnection(url, options);
         return Observable.fromPromise(this._hubConnection.start().then(value => {
             return this._hubConnection.invoke("Connect").then((value: string) => {
                 return value;

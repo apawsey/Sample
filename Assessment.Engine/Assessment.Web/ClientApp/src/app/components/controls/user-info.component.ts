@@ -9,7 +9,6 @@ import { AlertService, MessageSeverity } from '../../services/alert.service';
 import { AccountService } from "../../services/account.service";
 import { Utilities } from '../../services/utilities';
 import { User } from '../../models/user.model';
-import { UserEdit } from '../../models/user-edit.model';
 
 
 @Component({
@@ -28,7 +27,6 @@ export class UserInfoComponent implements OnInit {
     private editingUserName: string;
     private uniqueId: string = Utilities.uniqueId();
     private user: User = new User();
-    private userEdit: UserEdit;
 
     public formResetToggle = true;
 
@@ -85,7 +83,6 @@ export class UserInfoComponent implements OnInit {
 
 
     private close() {
-        this.userEdit = this.user = new UserEdit();
         this.showValidationErrors = false;
         this.resetForm();
         this.isEditMode = false;
